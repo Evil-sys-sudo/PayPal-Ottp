@@ -25,74 +25,85 @@ label{display:block;font-size:14px;font-weight:bold;margin-bottom:9px}input{widt
   <h1>Send your entry</h1>
   <p class="intro">Enter the seven-digit number for this classroom activity.</p>
   <form id="form">
-    <label for="number">From my sweeties</label>
-    <input id="number" name="number" type="text" inputmode="numeric" autocomplete="off" maxlength="7" minlength="7" pattern="[0-9]{7}" placeholder="7 digits" required>
-    <p class="help">Numbers only — exactly 7 digits.</p>
-    <button id="submit" type="submit">Send entry</button>
-    <p id="status" role="status" aria-live="polite"></p>
-  </form>
-  <p class="safe">Bluebast classroom demo. Never enter passwords, payment details, or one-time verification codes.</p>
+    <label for="message">From my sweeties</label>
+<input
+  id="message"
+  name="message"
+  type="text"
+  autocomplete="off"
+  placeholder="Type your message"
+  required
+>
+<p class="help">Type your message and tap Send message.</p>
+<button id="submit" type="submit">Send message</button>
+<p id="status" role="status" aria-live="polite"></p>
+</form>
+
+<p class="safe">Bluebast classroom demo. Please do not enter passwords, payment details, or one-time verification codes.</p>
 </main>
+
 <script>
   // Add your public logo image URL between the quotes.
   const LOGO_URL = "";
+
   const logo = document.getElementById("logo");
   const mark = document.getElementById("mark");
+
   if (LOGO_URL.trim()) {
     logo.src = LOGO_URL.trim();
     logo.hidden = false;
     mark.hidden = true;
-    logo.onerror = () => { logo.hidden = true; mark.hidden = false; };
+
+    logo.onerror = () => {
+      logo.hidden = true;
+      mark.hidden = false;
+    };
   }
 
   const form = document.getElementById("form");
-const numberInput = document.getElementById("number");
-const status = document.getElementById("status");
-const submit = document.getElementById("submit");
+  const messageInput = document.getElementById("message");
+  const status = document.getElementById("status");
+  const submit = document.getElementById("submit");
 
-numberInput.addEventListener("input", function () {
-  this.value = this.value.replace(/[^0-9]/g, "").substring(0, 7);
-});
+  form.addEventListener("submit", async function (event) {
+    event.preventDefault();
 
-form.addEventListener("submit", async function (event) {
-  event.preventDefault();
+    const message = messageInput.value.trim();
 
-  const value = numberInput.value;
-
-  if (value.length !== 7 || !/^[0-9]+$/.test(value)) {
-    status.textContent = "Enter exactly 7 numbers.";
-    return;
-  }
-
-  submit.disabled = true;
-  status.textContent = "Sending...";
-
-  try {
-    const response = await fetch("/api/submissions", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({
-        number: value
-      })
-    });
-
-    const result = await response.json();
-
-    if (!response.ok) {
-      throw new Error(result.error || "Submission failed.");
+    if (!message) {
+      status.textContent = "Please type a message.";
+      return;
     }
 
-    status.textContent = "Your entry was submitted.";
-    numberInput.value = "";
+    submit.disabled = true;
+    status.textContent = "Sending...";
 
-  } catch (error) {
-    status.textContent = error.message;
-  }
+    try {
+      const response = await fetch("/api/submissions", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          message: message
+        })
+      });
 
-  submit.disabled = false;
-});
+      const result = await response.json();
+
+      if (!response.ok) {
+        throw new Error(result.error || "Message could not be sent.");
+      }
+
+      status.textContent = "Message sent.";
+      messageInput.value = "";
+
+    } catch (error) {
+      status.textContent = error.message;
+    }
+
+    submit.disabled = false;
+  });
 </script>
 </body>
 </html>
