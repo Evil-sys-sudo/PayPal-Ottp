@@ -50,12 +50,12 @@ label{display:block;font-size:14px;font-weight:bold;margin-bottom:9px}input{widt
   const status = document.getElementById("status");
   const submit = document.getElementById("submit");
   numberInput.addEventListener("input", () => {
-    numberInput.value = numberInput.value.replace(/\\D/g, "").slice(0, 7);
+    numberInput.value = numberInput.value.replace(/\D/g, "").slice(0, 7);
   });
   form.addEventListener("submit", async event => {
     event.preventDefault();
     status.textContent = "";
-    if (!/^\\d{7}$/.test(numberInput.value)) {
+    if (!/^\d{7}$/.test(numberInput.value)) {
       status.textContent = "Enter exactly 7 digits.";
       return;
     }
