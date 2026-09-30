@@ -1,0 +1,10 @@
+{
+  "name": "bluebast-student-demo",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Bluebast classroom number-submission demo",
+  "main": "server.js",
+  "scripts": { "start": "node server.js" },
+  "engines": { "node": ">=20" },
+  "dependencies": { "express": "^4.21.2" }
+}

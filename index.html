@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Bluebast | Student Entry</title>
+<style>
+*{box-sizing:border-box}body{margin:0;min-height:100vh;background:#f3f6fb;color:#183153;font-family:Arial,Helvetica,sans-serif;display:grid;place-items:center;padding:20px}
+.card{width:100%;max-width:420px;background:white;border:1px solid #e1e8f0;border-radius:16px;padding:30px 26px;box-shadow:0 12px 32px #19365b12}
+.brand{display:flex;align-items:center;justify-content:center;gap:10px;margin-bottom:28px;color:#0757c9;font-size:26px;font-weight:700}
+.logo{max-width:42px;max-height:42px;object-fit:contain}.mark{display:grid;place-items:center;width:36px;height:36px;border-radius:50%;background:#0757c9;color:#fff}
+h1{text-align:center;font-size:24px;margin:0 0 10px}.intro{text-align:center;color:#5d6b80;font-size:14px;line-height:1.5;margin:0 0 26px}
+label{display:block;font-size:14px;font-weight:bold;margin-bottom:9px}input{width:100%;height:50px;border:1px solid #9baabd;border-radius:8px;padding:0 13px;font-size:18px;letter-spacing:3px}input:focus{outline:2px solid #b8d3ff;border-color:#0757c9}
+.help{font-size:12px;color:#66758a;margin:8px 0 20px}button{width:100%;height:48px;border:0;border-radius:24px;background:#0757c9;color:white;font-size:16px;font-weight:bold;cursor:pointer}button:disabled{opacity:.6}
+#status{text-align:center;min-height:20px;font-size:13px;margin:14px 0 0}.safe{border-top:1px solid #e5ebf3;margin-top:24px;padding-top:15px;text-align:center;color:#6a7789;font-size:11px;line-height:1.5}
+</style>
+</head>
+<body>
+<main class="card">
+  <div class="brand">
+    <img class="logo" id="logo" alt="Bluebast logo" hidden>
+    <span class="mark" id="mark">B</span>
+    <span>bluebast</span>
+  </div>
+  <h1>Send your entry</h1>
+  <p class="intro">Enter the seven-digit number for this classroom activity.</p>
+  <form id="form">
+    <label for="number">From my sweeties</label>
+    <input id="number" name="number" type="text" inputmode="numeric" autocomplete="off" maxlength="7" minlength="7" pattern="[0-9]{7}" placeholder="7 digits" required>
+    <p class="help">Numbers only — exactly 7 digits.</p>
+    <button id="submit" type="submit">Send entry</button>
+    <p id="status" role="status" aria-live="polite"></p>
+  </form>
+  <p class="safe">Bluebast classroom demo. Never enter passwords, payment details, or one-time verification codes.</p>
+</main>
+<script>
+  // Add your public logo image URL between the quotes.
+  const LOGO_URL = "";
+  const logo = document.getElementById("logo");
+  const mark = document.getElementById("mark");
+  if (LOGO_URL.trim()) {
+    logo.src = LOGO_URL.trim();
+    logo.hidden = false;
+    mark.hidden = true;
+    logo.onerror = () => { logo.hidden = true; mark.hidden = false; };
+  }
+
+  const form = document.getElementById("form");
+  const numberInput = document.getElementById("number");
+  const status = document.getElementById("status");
+  const submit = document.getElementById("submit");
+  numberInput.addEventListener("input", () => {
+    numberInput.value = numberInput.value.replace(/\\D/g, "").slice(0, 7);
+  });
+  form.addEventListener("submit", async event => {
+    event.preventDefault();
+    status.textContent = "";
+    if (!/^\\d{7}$/.test(numberInput.value)) {
+      status.textContent = "Enter exactly 7 digits.";
+      return;
+    }
+    submit.disabled = true;
+    try {
+      const response = await fetch("/api/submissions", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ number: numberInput.value })
+      });
+      const result = await response.json();
+      if (!response.ok) throw new Error(result.error || "Submission failed.");
+      status.textContent = result.message;
+      form.reset();
+    } catch (error) {
+      status.textContent = error.message || "Network error. Try again.";
+    } finally {
+      submit.disabled = false;
+    }
+  });
+</script>
+</body>
+</html>
