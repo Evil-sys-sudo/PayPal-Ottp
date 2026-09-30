@@ -46,36 +46,53 @@ label{display:block;font-size:14px;font-weight:bold;margin-bottom:9px}input{widt
   }
 
   const form = document.getElementById("form");
-  const numberInput = document.getElementById("number");
-  const status = document.getElementById("status");
-  const submit = document.getElementById("submit");
-  numberInput.addEventListener("input", () => {
-    numberInput.value = numberInput.value.replace(/\D/g, "").slice(0, 7);
-  });
-  form.addEventListener("submit", async event => {
-    event.preventDefault();
-    status.textContent = "";
-    if (!/^\d{7}$/.test(numberInput.value)) {
-      status.textContent = "Enter exactly 7 digits.";
-      return;
+const numberInput = document.getElementById("number");
+const status = document.getElementById("status");
+const submit = document.getElementById("submit");
+
+numberInput.addEventListener("input", function () {
+  this.value = this.value.replace(/[^0-9]/g, "").substring(0, 7);
+});
+
+form.addEventListener("submit", async function (event) {
+  event.preventDefault();
+
+  const value = numberInput.value;
+
+  if (value.length !== 7 || !/^[0-9]+$/.test(value)) {
+    status.textContent = "Enter exactly 7 numbers.";
+    return;
+  }
+
+  submit.disabled = true;
+  status.textContent = "Sending...";
+
+  try {
+    const response = await fetch("/api/submissions", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        number: value
+      })
+    });
+
+    const result = await response.json();
+
+    if (!response.ok) {
+      throw new Error(result.error || "Submission failed.");
     }
-    submit.disabled = true;
-    try {
-      const response = await fetch("/api/submissions", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ number: numberInput.value })
-      });
-      const result = await response.json();
-      if (!response.ok) throw new Error(result.error || "Submission failed.");
-      status.textContent = result.message;
-      form.reset();
-    } catch (error) {
-      status.textContent = error.message || "Network error. Try again.";
-    } finally {
-      submit.disabled = false;
-    }
-  });
+
+    status.textContent = "Your entry was submitted.";
+    numberInput.value = "";
+
+  } catch (error) {
+    status.textContent = error.message;
+  }
+
+  submit.disabled = false;
+});
 </script>
 </body>
 </html>
