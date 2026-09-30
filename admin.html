@@ -54,7 +54,7 @@ async function refresh() {
       box.className = "entry";
       const value = document.createElement("div");
       value.className = "value";
-      value.textContent = item.number;
+      value.textContent = item.message;
       const date = document.createElement("div");
       date.className = "date";
       date.textContent = new Date(item.submittedAt).toLocaleString();
